@@ -15,7 +15,7 @@ class Game {
 	initActions() {
 		const thisGame = this;
 		thisGame.dom.board.addEventListener('click', function (event) {
-			thisGame.checkCell(event.target.id);
+			thisGame.checkCell(event.target.getAttribute(select.gameElements.cellId));
 		});
 		thisGame.activeCells = [];
 	}
@@ -35,7 +35,7 @@ class Game {
 	}
 	checkCell(cellId) {
 		const thisGame = this;
-		thisGame.dom.checkedCell = thisGame.dom.board.querySelector(`[id="${cellId}"]`);
+		thisGame.dom.checkedCell = thisGame.dom.board.querySelector(`[data-id="${cellId}"]`);
 		const checkedCell = thisGame.dom.checkedCell;
 		if (thisGame.activeCells.length === 0) {
 			checkedCell.classList.add(select.styles.active);
@@ -50,7 +50,7 @@ class Game {
 			thisGame.renderOptions(cellId);
 		} else if (thisGame.lastCell == cellId && checkedCell.classList.contains(select.styles.active)) {
 			checkedCell.classList.remove(select.styles.active);
-			thisGame.deleteOptions(cellId);
+			thisGame.deleteOptions();
 		}
 	}
 	renderOptions(cellId) {
@@ -67,21 +67,28 @@ class Game {
 		}
 		options.forEach(function (element) {
 			const cell = parseInt(cellId) + element;
-			const optionCell = thisGame.dom.board.querySelector(`[id="${cell}"]`);
+			const optionCell = thisGame.dom.board.querySelector(`[data-id="${cell}"]`);
 			if (cell >= 0 && cell < 100 && !optionCell.classList.contains(select.styles.active) && !optionCell.classList.contains(select.styles.option)) {
 				optionCell.classList.add(select.styles.option);
 				thisGame.lastOptions.push(cell);
 			}
 		});
 	}
-	deleteOptions(cellId) {
+	deleteOptions() {
 		const thisGame = this;
+		thisGame.activeCells.pop();
 		thisGame.lastOptions.forEach(function (element) {
 			const cell = parseInt(element);
-			const optionCell = thisGame.dom.board.querySelector(`[id="${cell}"]`);
+			const optionCell = thisGame.dom.board.querySelector(`[data-id="${cell}"]`);
 			optionCell.classList.remove(select.styles.option);
-			thisGame.dom.checkedCell.classList.add(select.styles.option);
 		});
+		if (thisGame.activeCells.length !== 0) {
+			thisGame.dom.checkedCell.classList.add(select.styles.option);
+		}
+		if (thisGame.lastOptions.length == 0 && thisGame.activeCells.length !== 0) {
+			const lastCell = thisGame.dom.board.querySelector(`[data-id="${thisGame.lastCell}"]`);
+			lastCell.classList.add(select.styles.option);
+		}
 	}
 }
 

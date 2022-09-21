@@ -2,6 +2,7 @@ export const select = {
 	gameElements: {
 		board: '.game-board',
 		cell: '.game-cell',
+		cellId: 'data-id',
 	},
 	styles: {
 		active: 'active',

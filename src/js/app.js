@@ -1,4 +1,3 @@
-import { select } from './settings.js';
 import Game from './components/Game.js';
 
 const app = {

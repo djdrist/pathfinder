@@ -9,6 +9,7 @@ body {
 		display: flex;
 		flex-wrap: wrap;
 	}
+
 	.game-cell {
 		width: 66px;
 		height: 66px;
@@ -19,6 +20,7 @@ body {
 .active {
 	background-color: tomato;
 }
+
 .option {
 	background-color: green;
 }
