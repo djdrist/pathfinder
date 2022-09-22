@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import { select, settings } from '../settings.js';
 
 class Game {
@@ -34,7 +35,7 @@ class Game {
 			}
 			if (buttonState == settings.button.end && thisGame.startPoint >= 0 && thisGame.endPoint >= 0) {
 				thisGame.dom.button.innerHTML = settings.button.reset;
-				thisGame.calcRoutes();
+				thisGame.calcRoute();
 			}
 		});
 	}
@@ -121,31 +122,63 @@ class Game {
 			thisGame.dom.checkedCell.classList.remove(select.styles.active);
 			thisGame.dom.checkedCell.classList.add(select.styles.startPoint);
 		} else if (thisGame.startPoint >= 0 && thisGame.startPoint != cellId && thisGame.endPoint == undefined && thisGame.activeCells.includes(cellId)) {
-			thisGame.endPoint = cellId;
+			thisGame.endPoint = parseInt(cellId);
 			thisGame.dom.checkedCell.classList.remove(select.styles.active);
 			thisGame.dom.checkedCell.classList.add(select.styles.endPoint);
 		}
 	}
 
-	calcRoutes() {
+	calcRoute() {
 		const thisGame = this;
 		thisGame.activeCells.splice(thisGame.activeCells.indexOf(thisGame.startPoint), 1);
-		thisGame.activeCells.splice(thisGame.activeCells.indexOf(thisGame.endPoint), 1);
 		thisGame.cells = [];
 		thisGame.activeCells.forEach(function (element) {
 			thisGame.cells.push(parseInt(element));
 		});
-		console.log(thisGame.cells);
-		console.log(thisGame.findNext(thisGame.startPoint));
+		thisGame.pathNumber = 0;
+		thisGame.path = {};
+		thisGame.path[thisGame.pathNumber] = [];
+		thisGame.path[thisGame.pathNumber].push(parseInt(thisGame.startPoint));
+		thisGame.initSearch();
+		//thisGame.checkedPoints = [];
+		//thisGame.checkedPoints.shift();
+		console.log(thisGame.path);
 	}
-	findNext(point) {
+
+	initPath(startPoint) {
 		const thisGame = this;
-		point = parseInt(point);
+		thisGame.pathNumber = thisGame.pathNumber + 1;
+		thisGame.path[thisGame.pathNumber] = [];
+		thisGame.path[thisGame.pathNumber].push(parseInt(startPoint));
+		console.log('adding path');
+	}
+
+	initNextRound() {
+		const thisGame = this;
+		thisGame.initSearch();
+	}
+
+	initSearch() {
+		console.log('init search');
+		const thisGame = this;
+		for (let i = 0; i <= thisGame.pathNumber; i++) {
+			let lastElement = thisGame.path[i].length - 1;
+			let lastCell = thisGame.path[i][lastElement];
+			if (lastCell >= 0) {
+				thisGame.findNext(lastCell, i);
+			}
+		}
+		if (thisGame.success != 0) {
+			console.log('NOT FOUND');
+			thisGame.initNextRound();
+		} else {
+			console.log('FOUND');
+		}
+	}
+	findNext(point, pathNumber) {
+		const thisGame = this;
 		let options = [-settings.game.rows, settings.game.rows];
 		let nextPoint = [];
-		console.log(thisGame.borderRight);
-		console.log(thisGame.borderLeft);
-		console.log(point);
 		if (thisGame.borderRight.includes(point)) {
 			options.push(-1);
 		} else if (thisGame.borderLeft.includes(point)) {
@@ -155,12 +188,31 @@ class Game {
 		}
 		for (let option of options) {
 			const x = point + option;
-			if (x >= 0 && x < settings.game.rows * settings.game.cols && thisGame.cells.includes(x)) {
+			if (x >= 0 && x < settings.game.rows * settings.game.cols && thisGame.cells.includes(x) && !thisGame.path[pathNumber].includes(x)) {
 				nextPoint.push(x);
 			}
 		}
-
-		return nextPoint;
+		thisGame.renderRoutes(nextPoint, pathNumber);
+	}
+	renderRoutes(points, pathNumber) {
+		const thisGame = this;
+		if (points.length == 0) {
+			thisGame.path[pathNumber].push(-100);
+		}
+		if (points.length == 1) {
+			if (points[0] == thisGame.endPoint) {
+				thisGame.path[pathNumber].push('success');
+				thisGame.success = 0;
+			} else {
+				thisGame.path[pathNumber].push(points[0]);
+			}
+		}
+		if (points.length > 1) {
+			thisGame.path[pathNumber].push(points[0]);
+			for (let i = 1; i <= points.length; i++) {
+				thisGame.initPath(points[i]);
+			}
+		}
 	}
 }
 
