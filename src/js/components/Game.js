@@ -147,10 +147,16 @@ class Game {
 
 	initPath(startPoint) {
 		const thisGame = this;
+		const newPath = thisGame.pathNumber + 1;
+		console.log('!', thisGame.path[thisGame.pathNumber]);
+		thisGame.path[newPath] = [];
+		thisGame.path[thisGame.pathNumber].forEach(function (element) {
+			thisGame.path[newPath].push(element);
+		});
+		thisGame.path[newPath].push(parseInt(startPoint));
 		thisGame.pathNumber = thisGame.pathNumber + 1;
-		thisGame.path[thisGame.pathNumber] = [];
-		thisGame.path[thisGame.pathNumber].push(parseInt(startPoint));
-		console.log('adding path');
+		console.log(newPath);
+		console.log(thisGame.path[newPath]);
 	}
 
 	initNextRound() {
@@ -164,6 +170,8 @@ class Game {
 		for (let i = 0; i <= thisGame.pathNumber; i++) {
 			let lastElement = thisGame.path[i].length - 1;
 			let lastCell = thisGame.path[i][lastElement];
+			console.log(lastCell);
+			console.log(i);
 			if (lastCell >= 0) {
 				thisGame.findNext(lastCell, i);
 			}
@@ -192,12 +200,14 @@ class Game {
 				nextPoint.push(x);
 			}
 		}
+		console.log('nextPoint', nextPoint);
 		thisGame.renderRoutes(nextPoint, pathNumber);
 	}
 	renderRoutes(points, pathNumber) {
 		const thisGame = this;
 		if (points.length == 0) {
 			thisGame.path[pathNumber].push(-100);
+			console.log('missed');
 		}
 		if (points.length == 1) {
 			if (points[0] == thisGame.endPoint) {
@@ -207,11 +217,9 @@ class Game {
 				thisGame.path[pathNumber].push(points[0]);
 			}
 		}
-		if (points.length > 1) {
+		if (points.length == 2) {
+			thisGame.initPath(points[1]);
 			thisGame.path[pathNumber].push(points[0]);
-			for (let i = 1; i <= points.length; i++) {
-				thisGame.initPath(points[i]);
-			}
 		}
 	}
 }
