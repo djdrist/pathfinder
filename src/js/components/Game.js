@@ -37,6 +37,10 @@ class Game {
 				thisGame.dom.button.innerHTML = settings.button.reset;
 				thisGame.calcRoute();
 			}
+			if (buttonState == settings.button.reset) {
+				thisGame.resetGame();
+				thisGame.dom.button.innerHTML = settings.button.start;
+			}
 		});
 	}
 	initBorders() {
@@ -140,6 +144,8 @@ class Game {
 		thisGame.path[thisGame.pathNumber].push(parseInt(thisGame.startPoint));
 		thisGame.initSearch();
 		console.log(thisGame.path['success']);
+		console.log(thisGame.path);
+		thisGame.clearAndShow();
 	}
 
 	initPath(startPoint, pathNumber) {
@@ -188,15 +194,16 @@ class Game {
 		}
 		for (let option of options) {
 			const x = point + option;
-			if (x >= 0 && x < settings.game.rows * settings.game.cols && thisGame.cells.includes(x) && !thisGame.path[pathNumber].includes(x)) {
+			if (x == thisGame.endPoint) {
+				thisGame.success = 0;
+				thisGame.path['success'] = thisGame.path[pathNumber];
+				thisGame.path['success'].shift();
+				break;
+			} else if (x >= 0 && x < settings.game.rows * settings.game.cols && thisGame.cells.includes(x) && !thisGame.path[pathNumber].includes(x)) {
 				nextPoint.push(x);
 			}
 		}
-		if (nextPoint.includes(thisGame.endPoint)) {
-			thisGame.success = 0;
-			thisGame.path['success'] = thisGame.path[pathNumber];
-			thisGame.path['success'].shift();
-		} else {
+		if (thisGame.success != 0) {
 			thisGame.renderRoutes(nextPoint, pathNumber);
 		}
 	}
@@ -217,6 +224,37 @@ class Game {
 			thisGame.initPath(points[2], pathNumber);
 			thisGame.path[pathNumber].push(points[0]);
 		}
+	}
+	clearAndShow() {
+		const thisGame = this;
+		for (let i = 0; i < settings.game.rows * settings.game.cols; i++) {
+			const currentCell = thisGame.dom.board.querySelector(`[data-id="${i}"]`);
+			if (currentCell.classList.contains(select.styles.option)) {
+				currentCell.classList.remove(select.styles.option);
+			}
+			if (currentCell.classList.contains(select.styles.active)) {
+				currentCell.classList.remove(select.styles.active);
+			}
+		}
+		thisGame.path['success'].forEach(function (element) {
+			const pathCell = thisGame.dom.board.querySelector(`[data-id="${element}"]`);
+			pathCell.classList.add(select.styles.path);
+		});
+	}
+	resetGame() {
+		const thisGame = this;
+		thisGame.path['success'].forEach(function (element) {
+			const pathCell = thisGame.dom.board.querySelector(`[data-id="${element}"]`);
+			pathCell.classList.remove(select.styles.path);
+		});
+		const startCell = thisGame.dom.board.querySelector(`[data-id="${thisGame.startPoint}"]`);
+		const endCell = thisGame.dom.board.querySelector(`[data-id="${thisGame.endPoint}"]`);
+		startCell.classList.remove(select.styles.startPoint);
+		endCell.classList.remove(select.styles.endPoint);
+		thisGame.activeCells = [];
+		thisGame.startPoint = undefined;
+		thisGame.endPoint = undefined;
+		thisGame.success = undefined;
 	}
 }
 

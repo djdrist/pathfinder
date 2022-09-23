@@ -8,6 +8,7 @@ export const select = {
 	styles: {
 		active: 'active',
 		option: 'option',
+		path: 'path',
 		startPoint: 'start',
 		endPoint: 'end',
 	},
