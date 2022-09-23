@@ -45,7 +45,6 @@ class Game {
 		thisGame.borderRight = [];
 		const rows = settings.game.rows;
 		const cols = settings.game.cols;
-
 		for (let i = rows - 1; i < rows * cols; i += rows) {
 			thisGame.borderRight.push(i);
 		}
@@ -140,23 +139,19 @@ class Game {
 		thisGame.path[thisGame.pathNumber] = [];
 		thisGame.path[thisGame.pathNumber].push(parseInt(thisGame.startPoint));
 		thisGame.initSearch();
-		//thisGame.checkedPoints = [];
-		//thisGame.checkedPoints.shift();
-		console.log(thisGame.path);
+		console.log(thisGame.path['success']);
 	}
 
-	initPath(startPoint) {
+	initPath(startPoint, pathNumber) {
 		const thisGame = this;
 		const newPath = thisGame.pathNumber + 1;
-		console.log('!', thisGame.path[thisGame.pathNumber]);
 		thisGame.path[newPath] = [];
-		thisGame.path[thisGame.pathNumber].forEach(function (element) {
+		thisGame.path[pathNumber].forEach(function (element) {
 			thisGame.path[newPath].push(element);
 		});
+		//thisGame.path[newPath].pop();
 		thisGame.path[newPath].push(parseInt(startPoint));
 		thisGame.pathNumber = thisGame.pathNumber + 1;
-		console.log(newPath);
-		console.log(thisGame.path[newPath]);
 	}
 
 	initNextRound() {
@@ -165,13 +160,10 @@ class Game {
 	}
 
 	initSearch() {
-		console.log('init search');
 		const thisGame = this;
 		for (let i = 0; i <= thisGame.pathNumber; i++) {
 			let lastElement = thisGame.path[i].length - 1;
 			let lastCell = thisGame.path[i][lastElement];
-			console.log(lastCell);
-			console.log(i);
 			if (lastCell >= 0) {
 				thisGame.findNext(lastCell, i);
 			}
@@ -200,25 +192,29 @@ class Game {
 				nextPoint.push(x);
 			}
 		}
-		console.log('nextPoint', nextPoint);
-		thisGame.renderRoutes(nextPoint, pathNumber);
+		if (nextPoint.includes(thisGame.endPoint)) {
+			thisGame.success = 0;
+			thisGame.path['success'] = thisGame.path[pathNumber];
+			thisGame.path['success'].shift();
+		} else {
+			thisGame.renderRoutes(nextPoint, pathNumber);
+		}
 	}
 	renderRoutes(points, pathNumber) {
 		const thisGame = this;
 		if (points.length == 0) {
 			thisGame.path[pathNumber].push(-100);
-			console.log('missed');
 		}
 		if (points.length == 1) {
-			if (points[0] == thisGame.endPoint) {
-				thisGame.path[pathNumber].push('success');
-				thisGame.success = 0;
-			} else {
-				thisGame.path[pathNumber].push(points[0]);
-			}
+			thisGame.path[pathNumber].push(points[0]);
 		}
 		if (points.length == 2) {
-			thisGame.initPath(points[1]);
+			thisGame.initPath(points[1], pathNumber);
+			thisGame.path[pathNumber].push(points[0]);
+		}
+		if (points.length == 3) {
+			thisGame.initPath(points[1], pathNumber);
+			thisGame.initPath(points[2], pathNumber);
 			thisGame.path[pathNumber].push(points[0]);
 		}
 	}
