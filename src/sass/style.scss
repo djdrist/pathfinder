@@ -1,16 +1,19 @@
+// @import './partials/colors';
+// @import './partials/path';
+
 body {
 	background: #fff;
 }
 
-.game {
-	.game-board {
+.path-finder {
+	.path-board {
 		width: 700px;
 		height: 700px;
 		display: flex;
 		flex-wrap: wrap;
 	}
 
-	.game-cell {
+	.path-cell {
 		width: 66px;
 		height: 66px;
 		border: 2px solid black;
@@ -25,7 +28,7 @@ body {
 	background-color: green;
 }
 
-.game-btn {
+.path-btn {
 	margin-top: 20px;
 	width: 200px;
 	padding: 20px;

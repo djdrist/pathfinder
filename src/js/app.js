@@ -1,13 +1,13 @@
-import Game from './components/Game.js';
+import Path from './components/Path.js';
 
 const app = {
 	init: function () {
 		const thisApp = this;
-		thisApp.initGame();
+		thisApp.initPath();
 	},
-	initGame() {
+	initPath() {
 		const thisApp = this;
-		thisApp.game = new Game();
+		thisApp.path = new Path();
 	},
 };
 app.init();

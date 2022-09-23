@@ -1,9 +1,9 @@
 export const select = {
-	gameElements: {
-		board: '.game-board',
-		cell: '.game-cell',
+	pathElements: {
+		board: '.path-board',
+		cell: '.path-cell',
 		cellId: 'data-id',
-		button: '.game-btn',
+		button: '.path-btn',
 	},
 	styles: {
 		active: 'active',
@@ -14,7 +14,7 @@ export const select = {
 	},
 };
 export const settings = {
-	game: {
+	path: {
 		rows: 10,
 		cols: 10,
 	},
