@@ -12,6 +12,11 @@ export const select = {
 		startPoint: 'start',
 		endPoint: 'end',
 	},
+	elements: {
+		links: 'nav a',
+		about: '.about',
+		finder: '.finder',
+	},
 };
 export const settings = {
 	path: {

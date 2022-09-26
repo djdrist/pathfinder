@@ -10,6 +10,23 @@ body {
 	position: relative;
 }
 
+nav {
+	position: absolute;
+	top: 30px;
+	left: 50%;
+	transform: translate(-50%);
+	z-index: 1;
+}
+
+a {
+	color: $light;
+	text-decoration: none;
+	font-size: 20px;
+	font-weight: 400;
+	letter-spacing: 1px;
+	padding: 40px;
+}
+
 .hero {
 	position: relative;
 	background-image: url(../images/background.jpg);
@@ -25,6 +42,29 @@ body {
 	height: 400px;
 	bottom: 0px;
 }
+
+.hero-header {
+	position: absolute;
+	left: 50%;
+	top: 240px;
+	transform: translate(-50%, -50%);
+}
+
+h1 {
+	font-size: 64px;
+	font-weight: 900;
+	color: $light;
+	letter-spacing: 40px;
+}
+
+.hero-header p {
+	text-align: right;
+	font-size: 22px;
+	font-weight: 900;
+	opacity: 0.9;
+	letter-spacing: 8px;
+}
+
 .photo1 {
 	position: absolute;
 	background-image: url(../images/1.jpg);
@@ -34,6 +74,7 @@ body {
 	height: 340px;
 	top: 430px;
 	left: 110px;
+	border-radius: 1px;
 }
 .photo1-header {
 	position: absolute;
@@ -43,8 +84,27 @@ body {
 	width: 50vw;
 }
 
+.photo2 {
+	position: absolute;
+	background-image: url(../images/2.jpg);
+	background-position: center;
+	background-size: cover;
+	width: 62vw;
+	height: 420px;
+	top: 830px;
+	left: 400px;
+	border-radius: 1px;
+}
+.photo2-header {
+	position: absolute;
+	display: block;
+	top: 40px;
+	left: -230px;
+	width: 50vw;
+}
+
 h2 {
-	font-weight: 700;
+	font-weight: 600;
 	font-size: 40px;
 	color: $light;
 	letter-spacing: 4px;
@@ -56,44 +116,71 @@ p {
 	letter-spacing: 3px;
 }
 
-.path-finder {
+main {
+	height: 620px;
+}
+
+footer {
+	color: $light;
+	text-align: center;
+	padding-bottom: 20px;
+}
+
+span {
+	font-size: 14px;
+	color: $light;
+	font-weight: 400;
+	letter-spacing: 2px;
+}
+
+.finder {
 	.path-board {
-		width: 700px;
-		height: 700px;
+		width: 500px;
+		height: 500px;
 		display: flex;
 		flex-wrap: wrap;
+		margin: 0;
 	}
 
 	.path-cell {
-		width: 66px;
-		height: 66px;
-		border: 2px solid black;
+		width: 50px;
+		height: 50px;
+		border: 2px solid $light;
 	}
 }
 
 .active {
-	background-color: tomato;
+	background-color: $path;
 }
 
 .option {
-	background-color: green;
+	background-color: $start;
 }
 
 .path-btn {
-	margin-top: 20px;
+	margin-top: 40px;
 	width: 200px;
 	padding: 20px;
 	text-transform: uppercase;
 }
 
 .start {
-	background-color: yellow;
+	background-color: $start;
 }
 
 .end {
-	background-color: orange;
+	background-color: $end;
 }
 
 .path {
-	background-color: aqua;
+	background-color: $start;
+}
+
+.finder {
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%);
+	top: 500px;
+	display: none;
+	text-align: center;
 }

@@ -32,6 +32,12 @@ class Path {
 			const buttonState = thisPath.dom.button.innerHTML;
 			if (buttonState == settings.button.start) {
 				thisPath.dom.button.innerHTML = settings.button.end;
+				for (let i = 0; i < settings.path.rows * settings.path.cols; i++) {
+					const currentCell = thisPath.dom.board.querySelector(`[data-id="${i}"]`);
+					if (currentCell.classList.contains(select.styles.option)) {
+						currentCell.classList.remove(select.styles.option);
+					}
+				}
 			}
 			if (buttonState == settings.button.end && thisPath.startPoint >= 0 && thisPath.endPoint >= 0) {
 				thisPath.dom.button.innerHTML = settings.button.reset;
@@ -222,19 +228,13 @@ class Path {
 	}
 	clearAndShow() {
 		const thisPath = this;
-		for (let i = 0; i < settings.path.rows * settings.path.cols; i++) {
-			const currentCell = thisPath.dom.board.querySelector(`[data-id="${i}"]`);
-			if (currentCell.classList.contains(select.styles.option)) {
-				currentCell.classList.remove(select.styles.option);
-			}
-			if (currentCell.classList.contains(select.styles.active)) {
-				currentCell.classList.remove(select.styles.active);
-			}
-		}
 		thisPath.path['success'].forEach(function (element) {
 			const pathCell = thisPath.dom.board.querySelector(`[data-id="${element}"]`);
 			pathCell.classList.add(select.styles.path);
 		});
+		const endCell = thisPath.dom.board.querySelector(`[data-id="${thisPath.endPoint}"]`);
+		endCell.classList.remove(select.styles.endPoint);
+		endCell.classList.add(select.styles.path);
 	}
 	resetPath() {
 		const thisPath = this;
