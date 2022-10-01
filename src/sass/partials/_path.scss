@@ -1,0 +1,62 @@
+.finder {
+	position: absolute;
+	display: none;
+	left: 50%;
+	transform: translate(-50%);
+	top: 500px;
+	text-align: center;
+
+	.path-board {
+		width: 500px;
+		height: 500px;
+		display: flex;
+		flex-wrap: wrap;
+		margin: 0;
+	}
+
+	.path-cell {
+		width: 50px;
+		height: 50px;
+		border: 2px solid $light;
+	}
+
+	.path-info {
+		position: absolute;
+		top: -120px;
+		left: 50%;
+		transform: translate(-50%);
+		width: 100%;
+	}
+
+	.path-info-mobile {
+		display: none;
+	}
+}
+
+.path-btn {
+	margin-top: 40px;
+	width: 200px;
+	padding: 20px;
+	text-transform: uppercase;
+}
+
+.active {
+	background-color: $path;
+}
+
+.option {
+	background-color: $start;
+	opacity: 0.3;
+}
+
+.start {
+	background-color: $start;
+}
+
+.end {
+	background-color: $end;
+}
+
+.path {
+	background-color: $start;
+}

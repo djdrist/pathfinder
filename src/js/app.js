@@ -1,10 +1,11 @@
 import Path from './components/Path.js';
-import { select } from './settings.js';
+import { select, settings } from './settings.js';
 
 const app = {
 	init: function () {
 		const thisApp = this;
 		thisApp.initNav();
+		AOS.init(settings.aos);
 		thisApp.initPath();
 	},
 	initNav() {

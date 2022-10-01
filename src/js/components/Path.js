@@ -13,6 +13,7 @@ class Path {
 		thisPath.dom = {};
 		thisPath.dom.board = document.querySelector(select.pathElements.board);
 		thisPath.dom.button = document.querySelector(select.pathElements.button);
+		thisPath.dom.info = document.querySelector(select.pathElements.info);
 	}
 
 	initActions() {
@@ -32,6 +33,7 @@ class Path {
 			const buttonState = thisPath.dom.button.innerHTML;
 			if (buttonState == settings.button.start) {
 				thisPath.dom.button.innerHTML = settings.button.end;
+				thisPath.dom.info.innerHTML = settings.info.end;
 				for (let i = 0; i < settings.path.rows * settings.path.cols; i++) {
 					const currentCell = thisPath.dom.board.querySelector(`[data-id="${i}"]`);
 					if (currentCell.classList.contains(select.styles.option)) {
@@ -41,11 +43,13 @@ class Path {
 			}
 			if (buttonState == settings.button.end && thisPath.startPoint >= 0 && thisPath.endPoint >= 0) {
 				thisPath.dom.button.innerHTML = settings.button.reset;
+				thisPath.dom.info.innerHTML = settings.info.reset;
 				thisPath.calcRoute();
 			}
 			if (buttonState == settings.button.reset) {
 				thisPath.resetPath();
 				thisPath.dom.button.innerHTML = settings.button.start;
+				thisPath.dom.info.innerHTML = settings.info.start;
 			}
 		});
 	}
@@ -139,7 +143,6 @@ class Path {
 
 	calcRoute() {
 		const thisPath = this;
-		thisPath.activeCells.splice(thisPath.activeCells.indexOf(thisPath.startPoint), 1);
 		thisPath.cells = [];
 		thisPath.activeCells.forEach(function (element) {
 			thisPath.cells.push(parseInt(element));
@@ -149,6 +152,7 @@ class Path {
 		thisPath.path[thisPath.pathNumber] = [];
 		thisPath.path[thisPath.pathNumber].push(parseInt(thisPath.startPoint));
 		thisPath.initSearch();
+		console.log(thisPath);
 		thisPath.clearAndShow();
 	}
 
@@ -159,7 +163,7 @@ class Path {
 		thisPath.path[pathNumber].forEach(function (element) {
 			thisPath.path[newPath].push(element);
 		});
-		//thisPath.path[newPath].pop();
+		thisPath.path[newPath].pop();
 		thisPath.path[newPath].push(parseInt(startPoint));
 		thisPath.pathNumber = thisPath.pathNumber + 1;
 	}
@@ -172,13 +176,19 @@ class Path {
 	initSearch() {
 		const thisPath = this;
 		for (let i = 0; i <= thisPath.pathNumber; i++) {
+			if (thisPath.success == 0) {
+				break;
+			}
 			let lastElement = thisPath.path[i].length - 1;
-			let lastCell = thisPath.path[i][lastElement];
+			let lastCell = parseInt(thisPath.path[i][lastElement]);
 			if (lastCell >= 0) {
 				thisPath.findNext(lastCell, i);
 			}
 		}
-		if (thisPath.success != 0) {
+		if (thisPath.success == 0) {
+			console.log(thisPath.path['success']);
+			return;
+		} else {
 			thisPath.initNextRound();
 		}
 	}
@@ -193,18 +203,18 @@ class Path {
 		} else {
 			options.push(-1, 1);
 		}
-		for (let option of options) {
-			const x = point + option;
-			if (x == thisPath.endPoint) {
-				thisPath.success = 0;
-				thisPath.path['success'] = thisPath.path[pathNumber];
-				thisPath.path['success'].shift();
-				break;
-			} else if (x >= 0 && x < settings.path.rows * settings.path.cols && thisPath.cells.includes(x) && !thisPath.path[pathNumber].includes(x)) {
-				nextPoint.push(x);
+		const optionsArr = options.map((x) => x + point);
+
+		if (optionsArr.includes(thisPath.endPoint)) {
+			thisPath.success = 0;
+			thisPath.path['success'] = thisPath.path[pathNumber];
+			return;
+		} else {
+			for (let option of optionsArr) {
+				if (option >= 0 && option < settings.path.rows * settings.path.cols && thisPath.cells.includes(option) && !thisPath.path[pathNumber].includes(option)) {
+					nextPoint.push(option);
+				}
 			}
-		}
-		if (thisPath.success != 0) {
 			thisPath.renderRoutes(nextPoint, pathNumber);
 		}
 	}
@@ -217,13 +227,19 @@ class Path {
 			thisPath.path[pathNumber].push(points[0]);
 		}
 		if (points.length == 2) {
-			thisPath.initPath(points[1], pathNumber);
 			thisPath.path[pathNumber].push(points[0]);
+			thisPath.initPath(points[1], pathNumber);
 		}
 		if (points.length == 3) {
+			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 			thisPath.initPath(points[2], pathNumber);
+		}
+		if (points.length == 4) {
 			thisPath.path[pathNumber].push(points[0]);
+			thisPath.initPath(points[1], pathNumber);
+			thisPath.initPath(points[2], pathNumber);
+			thisPath.initPath(points[3], pathNumber);
 		}
 	}
 	clearAndShow() {
@@ -238,14 +254,21 @@ class Path {
 	}
 	resetPath() {
 		const thisPath = this;
+		console.log('x');
+		console.log(thisPath.path['success']);
 		thisPath.path['success'].forEach(function (element) {
 			const pathCell = thisPath.dom.board.querySelector(`[data-id="${element}"]`);
 			pathCell.classList.remove(select.styles.path);
+		});
+		thisPath.cells.forEach(function (element) {
+			const pathCell = thisPath.dom.board.querySelector(`[data-id="${element}"]`);
+			pathCell.classList.remove(select.styles.active);
 		});
 		const startCell = thisPath.dom.board.querySelector(`[data-id="${thisPath.startPoint}"]`);
 		const endCell = thisPath.dom.board.querySelector(`[data-id="${thisPath.endPoint}"]`);
 		startCell.classList.remove(select.styles.startPoint);
 		endCell.classList.remove(select.styles.endPoint);
+		endCell.classList.remove(select.styles.path);
 		thisPath.activeCells = [];
 		thisPath.startPoint = undefined;
 		thisPath.endPoint = undefined;

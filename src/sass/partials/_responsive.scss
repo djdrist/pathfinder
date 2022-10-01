@@ -1,0 +1,47 @@
+@media (max-width: 576px) {
+	.finder {
+		.path-board,
+		.path-info,
+		.path-btn {
+			display: none;
+		}
+		.path-info-mobile {
+			display: block;
+		}
+	}
+	a {
+		padding: 10px;
+	}
+}
+@media (max-width: 992px) {
+	body {
+		h1 {
+			font-size: 4rem;
+		}
+		p {
+		}
+	}
+	.photo2 {
+		left: 280px;
+	}
+	.photo2-header {
+		left: -130px;
+	}
+}
+@media (max-width: 768px) {
+	body {
+		h1 {
+			font-size: 4rem;
+			letter-spacing: 0;
+		}
+		p {
+			letter-spacing: 0;
+		}
+	}
+	.photo2 {
+		left: 180px;
+	}
+	.photo2-header {
+		left: -130px;
+	}
+}
