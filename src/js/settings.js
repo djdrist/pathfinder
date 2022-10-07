@@ -12,11 +12,16 @@ export const select = {
 		path: 'path',
 		startPoint: 'start',
 		endPoint: 'end',
+		modalActive: 'modal_active',
 	},
 	elements: {
 		links: 'nav a',
 		about: '.about',
 		finder: '.finder',
+		full: '.modal_full',
+		best: '.modal_best',
+		modal: '.modal',
+		modalClose: '.modal_close',
 	},
 };
 export const settings = {

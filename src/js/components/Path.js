@@ -15,6 +15,7 @@ class Path {
 		thisPath.dom.board = document.querySelector(select.pathElements.board);
 		thisPath.dom.button = document.querySelector(select.pathElements.button);
 		thisPath.dom.info = document.querySelector(select.pathElements.info);
+		thisPath.dom.modal = document.querySelector(select.elements.modal);
 	}
 
 	initActions() {
@@ -94,7 +95,6 @@ class Path {
 		const checkedCell = thisPath.dom.checkedCell;
 		const cells = [];
 		thisPath.search = 1;
-		//thisPath.activeCells.sort((a, b) => a - b);
 		thisPath.activeCells.splice(thisPath.activeCells.indexOf(cell), 1);
 		thisPath.activeCells.forEach(function (element) {
 			cells.push(parseInt(element));
@@ -207,7 +207,7 @@ class Path {
 			}
 			let lastElement = thisPath.path[i].length - 1;
 			lastCell = parseInt(thisPath.path[i][lastElement]);
-			if (lastCell < 0) {
+			if (!lastCell < 0) {
 				break;
 			} else {
 				thisPath.findNext(lastCell, i);
@@ -278,6 +278,7 @@ class Path {
 		const endCell = thisPath.dom.board.querySelector(`[data-id="${thisPath.endPoint}"]`);
 		endCell.classList.remove(select.styles.endPoint);
 		endCell.classList.add(select.styles.path);
+		thisPath.initModal();
 	}
 	resetPath() {
 		const thisPath = this;
@@ -298,6 +299,18 @@ class Path {
 		thisPath.startPoint = undefined;
 		thisPath.endPoint = undefined;
 		thisPath.success = undefined;
+	}
+	initModal() {
+		const thisPath = this;
+		thisPath.dom.modal.classList.add(select.styles.modalActive);
+		thisPath.dom.modalClose = document.querySelector(select.elements.modalClose);
+		thisPath.dom.modalClose.addEventListener('click', function () {
+			thisPath.dom.modal.classList.remove(select.styles.modalActive);
+		});
+		thisPath.dom.modalFull = document.querySelector(select.elements.full);
+		thisPath.dom.modalBest = document.querySelector(select.elements.best);
+		thisPath.dom.modalFull.textContent = thisPath.activeCells.length;
+		thisPath.dom.modalBest.textContent = thisPath.path['success'].length + 1;
 	}
 }
 
