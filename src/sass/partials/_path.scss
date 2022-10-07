@@ -74,6 +74,7 @@
 	background-color: $dark-opacity;
 	z-index: 100;
 }
+
 .modal-box {
 	position: absolute;
 	display: flex;
@@ -101,14 +102,17 @@
 	color: $dark;
 	font-weight: 600;
 }
+
 .modal_full {
 	font-size: 2rem;
 	color: $path;
 }
+
 .modal_best {
 	font-size: 2rem;
 	color: $start;
 }
+
 .modal_close {
 	position: absolute;
 	top: 0;
@@ -117,6 +121,7 @@
 	padding: 30px;
 	cursor: pointer;
 }
+
 .modal_active {
 	display: block;
 }
