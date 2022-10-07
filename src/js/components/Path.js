@@ -100,7 +100,6 @@ class Path {
 			cells.push(parseInt(element));
 		});
 		thisPath.startPoint = cells[0];
-		console.log(thisPath.startPoint);
 		cells.splice(0, 1);
 		for (let cell of cells) {
 			thisPath.success = undefined;
@@ -201,17 +200,20 @@ class Path {
 
 	initSearch() {
 		const thisPath = this;
+		let lastCell = 0;
 		for (let i = 0; i <= thisPath.pathNumber; i++) {
 			if (thisPath.success == 0) {
 				break;
 			}
 			let lastElement = thisPath.path[i].length - 1;
-			let lastCell = parseInt(thisPath.path[i][lastElement]);
-			if (lastCell >= 0) {
+			lastCell = parseInt(thisPath.path[i][lastElement]);
+			if (lastCell < 0) {
+				break;
+			} else {
 				thisPath.findNext(lastCell, i);
 			}
 		}
-		if (thisPath.success == 0) {
+		if (thisPath.success == 0 || lastCell < 0) {
 			return;
 		} else {
 			thisPath.initNextRound();
