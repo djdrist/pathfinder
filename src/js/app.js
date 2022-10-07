@@ -16,7 +16,6 @@ const app = {
 		thisApp.dom.about = document.querySelector(select.elements.about);
 		thisApp.dom.finder = document.querySelector(select.elements.finder);
 		for (let link of thisApp.dom.navLinks) {
-			console.log(link);
 			link.addEventListener('click', function (event) {
 				event.preventDefault();
 				thisApp.page = event.target.hash.replace('#', '');

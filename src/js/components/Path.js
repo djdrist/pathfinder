@@ -93,12 +93,14 @@ class Path {
 		let successCounter = 0;
 		const checkedCell = thisPath.dom.checkedCell;
 		const cells = [];
-		thisPath.activeCells.sort((a, b) => a - b);
+		thisPath.search = 1;
+		//thisPath.activeCells.sort((a, b) => a - b);
 		thisPath.activeCells.splice(thisPath.activeCells.indexOf(cell), 1);
 		thisPath.activeCells.forEach(function (element) {
 			cells.push(parseInt(element));
 		});
 		thisPath.startPoint = cells[0];
+		console.log(thisPath.startPoint);
 		cells.splice(0, 1);
 		for (let cell of cells) {
 			thisPath.success = undefined;
@@ -106,13 +108,8 @@ class Path {
 			thisPath.calcRoute();
 			if (thisPath.success == 0) {
 				successCounter++;
-			} else {
-				thisPath.initNextRound();
 			}
 		}
-		console.log('aktywne pola', thisPath.activeCells);
-		console.log('liczba pol', thisPath.activeCells.length);
-		console.log('counter', successCounter);
 		if (thisPath.activeCells.length - 1 == successCounter) {
 			canRemove = true;
 		}
@@ -216,7 +213,7 @@ class Path {
 		}
 		if (thisPath.success == 0) {
 			return;
-		} else if (thisPath.end == 0) {
+		} else {
 			thisPath.initNextRound();
 		}
 	}
@@ -249,26 +246,21 @@ class Path {
 	renderRoutes(points, pathNumber) {
 		const thisPath = this;
 		if (points.length == 0) {
-			thisPath.end = 1;
 			thisPath.path[pathNumber].push(-100);
 		}
 		if (points.length == 1) {
-			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 		}
 		if (points.length == 2) {
-			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 		}
 		if (points.length == 3) {
-			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 			thisPath.initPath(points[2], pathNumber);
 		}
 		if (points.length == 4) {
-			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 			thisPath.initPath(points[2], pathNumber);
