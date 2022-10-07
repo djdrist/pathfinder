@@ -1,4 +1,5 @@
 /* eslint-disable no-debugger */
+
 import { select, settings } from '../settings.js';
 
 class Path {
@@ -45,6 +46,7 @@ class Path {
 				thisPath.dom.button.innerHTML = settings.button.reset;
 				thisPath.dom.info.innerHTML = settings.info.reset;
 				thisPath.calcRoute();
+				thisPath.clearAndShow();
 			}
 			if (buttonState == settings.button.reset) {
 				thisPath.resetPath();
@@ -81,14 +83,59 @@ class Path {
 			thisPath.lastCell = cellId;
 			thisPath.activeCells.push(cellId);
 			thisPath.renderOptions(cellId);
-		} else if (thisPath.lastCell == cellId && checkedCell.classList.contains(select.styles.active)) {
+		} else if (checkedCell.classList.contains(select.styles.active)) {
+			thisPath.removeCell(cellId);
+		}
+	}
+	removeCell(cell) {
+		const thisPath = this;
+		let canRemove = false;
+		let successCounter = 0;
+		const checkedCell = thisPath.dom.checkedCell;
+		const cells = [];
+		thisPath.activeCells.sort((a, b) => a - b);
+		thisPath.activeCells.splice(thisPath.activeCells.indexOf(cell), 1);
+		thisPath.activeCells.forEach(function (element) {
+			cells.push(parseInt(element));
+		});
+		thisPath.startPoint = cells[0];
+		cells.splice(0, 1);
+		for (let cell of cells) {
+			thisPath.success = undefined;
+			thisPath.endPoint = cell;
+			thisPath.calcRoute();
+			if (thisPath.success == 0) {
+				successCounter++;
+			} else {
+				thisPath.initNextRound();
+			}
+		}
+		console.log('aktywne pola', thisPath.activeCells);
+		console.log('liczba pol', thisPath.activeCells.length);
+		console.log('counter', successCounter);
+		if (thisPath.activeCells.length - 1 == successCounter) {
+			canRemove = true;
+		}
+		if (canRemove == true) {
 			checkedCell.classList.remove(select.styles.active);
-			thisPath.deleteOptions();
+			for (let i = 0; i < settings.path.rows * settings.path.cols; i++) {
+				const currentCell = thisPath.dom.board.querySelector(`[data-id="${i}"]`);
+				if (currentCell.classList.contains(select.styles.option)) {
+					currentCell.classList.remove(select.styles.option);
+				}
+			}
+			thisPath.activeCells.forEach(function (cell) {
+				thisPath.renderOptions(cell);
+			});
+			thisPath.startPoint = undefined;
+			thisPath.endPoint = undefined;
+			thisPath.success = undefined;
+		} else if (canRemove == false) {
+			thisPath.activeCells.push(cell);
 		}
 	}
 	renderOptions(cellId) {
 		const thisPath = this;
-		thisPath.lastOptions = [];
 		cellId = parseInt(cellId);
 		let options = [-settings.path.rows, settings.path.rows];
 		if (thisPath.borderRight.includes(cellId)) {
@@ -108,26 +155,10 @@ class Path {
 				!optionCell.classList.contains(select.styles.option)
 			) {
 				optionCell.classList.add(select.styles.option);
-				thisPath.lastOptions.push(cell);
 			}
 		});
 	}
-	deleteOptions() {
-		const thisPath = this;
-		thisPath.activeCells.pop();
-		thisPath.lastOptions.forEach(function (element) {
-			const cell = parseInt(element);
-			const optionCell = thisPath.dom.board.querySelector(`[data-id="${cell}"]`);
-			optionCell.classList.remove(select.styles.option);
-		});
-		if (thisPath.activeCells.length !== 0) {
-			thisPath.dom.checkedCell.classList.add(select.styles.option);
-		}
-		if (thisPath.lastOptions.length == 0 && thisPath.activeCells.length !== 0) {
-			const lastCell = thisPath.dom.board.querySelector(`[data-id="${thisPath.lastCell}"]`);
-			lastCell.classList.add(select.styles.option);
-		}
-	}
+
 	selectPoints(cellId) {
 		const thisPath = this;
 		if (thisPath.startPoint == undefined && thisPath.activeCells.includes(cellId)) {
@@ -152,8 +183,6 @@ class Path {
 		thisPath.path[thisPath.pathNumber] = [];
 		thisPath.path[thisPath.pathNumber].push(parseInt(thisPath.startPoint));
 		thisPath.initSearch();
-		console.log(thisPath);
-		thisPath.clearAndShow();
 	}
 
 	initPath(startPoint, pathNumber) {
@@ -186,9 +215,8 @@ class Path {
 			}
 		}
 		if (thisPath.success == 0) {
-			console.log(thisPath.path['success']);
 			return;
-		} else {
+		} else if (thisPath.end == 0) {
 			thisPath.initNextRound();
 		}
 	}
@@ -221,21 +249,26 @@ class Path {
 	renderRoutes(points, pathNumber) {
 		const thisPath = this;
 		if (points.length == 0) {
+			thisPath.end = 1;
 			thisPath.path[pathNumber].push(-100);
 		}
 		if (points.length == 1) {
+			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 		}
 		if (points.length == 2) {
+			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 		}
 		if (points.length == 3) {
+			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 			thisPath.initPath(points[2], pathNumber);
 		}
 		if (points.length == 4) {
+			thisPath.end = 0;
 			thisPath.path[pathNumber].push(points[0]);
 			thisPath.initPath(points[1], pathNumber);
 			thisPath.initPath(points[2], pathNumber);
@@ -254,8 +287,6 @@ class Path {
 	}
 	resetPath() {
 		const thisPath = this;
-		console.log('x');
-		console.log(thisPath.path['success']);
 		thisPath.path['success'].forEach(function (element) {
 			const pathCell = thisPath.dom.board.querySelector(`[data-id="${element}"]`);
 			pathCell.classList.remove(select.styles.path);

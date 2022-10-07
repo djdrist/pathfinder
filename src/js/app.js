@@ -5,6 +5,7 @@ const app = {
 	init: function () {
 		const thisApp = this;
 		thisApp.initNav();
+		// eslint-disable-next-line
 		AOS.init(settings.aos);
 		thisApp.initPath();
 	},
